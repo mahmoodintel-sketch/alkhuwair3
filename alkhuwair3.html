@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>نظام تسجيل غياب الطلبة - مدرسة الخوير</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .school-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .school-header h1 {
+            font-size: 28px;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        .school-header p {
+            font-size: 18px;
+            color: #4a5568;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: #5a67d8;
+            transform: scale(1.02);
+        }
+        .btn-danger {
+            background: #e53e3e;
+        }
+        .btn-danger:hover {
+            background: #c53030;
+        }
+        .btn-success {
+            background: #48bb78;
+        }
+        .btn-success:hover {
+            background: #38a169;
+        }
+        .btn-warning {
+            background: #ed8936;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        .absent-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .present-badge {
+            background: #48bb78;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .delete-btn {
+            background: #a0aec0;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background: #718096;
+        }
+        .period-select {
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .date-box {
+            background: #edf2f7;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .login-box {
+            max-width: 400px;
+            margin: 80px auto;
+        }
+        .hidden {
+            display: none;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            background: #c6f6d5;
+            color: #22543d;
+            text-align: center;
+        }
+        .info-text {
+            background: #bee3f8;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            color: #2c5282;
+            font-size: 14px;
+        }
+        .role-badge {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+            th, td {
+                font-size: 11px;
+                padding: 5px;
+            }
+            .btn {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            .school-header h1 {
+                font-size: 22px;
+            }
+            .school-header p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <!-- شاشة تسجيل الدخول - لا تظهر أي أرقام سرية -->
+    <div id="loginScreen" class="card login-box">
+        <div class="school-header">
+            <h1>📖 تسجيل غياب الطلبة</h1>
+            <p>مدرسة الخوير للتعليم الأساسي (5 - 9)</p>
+        </div>
+        <div class="form-group">
+            <label>🔐 الرقم السري</label>
+            <input type="password" id="loginPassword" placeholder="أدخل الرقم السري" autocomplete="off">
+        </div>
+        <button class="btn" style="width: 100%;" onclick="login()">دخول</button>
+    </div>
+
+    <!-- واجهة المعلم (تسجيل الغياب فقط) -->
+    <div id="teacherScreen" class="hidden">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div class="school-header" style="margin-bottom: 0;">
+                    <h1>📖 تسجيل غياب الطلبة</h1>
+                    <p>مدرسة الخوير للتعليم الأساسي (5 - 9)</p>
+                </div>
+                <div>
+                    <span class="role-badge">👨‍🏫 معلم</span>
+                    <button class="btn btn-danger" onclick="logout()">🚪 خروج</button>
+                </div>
+            </div>
+            <div class="date-box" id="dateBoxTeacher"></div>
+            <div class="info-text">
+                💡 جميع الطلاب حاضرون تلقائياً. اضغط "❌ غائب" للطلاب المتغيبين، أو اختر الحصة من القائمة المنسدلة لتسجيل تسرب الطالب.
+            </div>
+            <div class="form-group">
+                <label>اختر المرحلة والفصل</label>
+                <select id="classSelectTeacher" onchange="loadStudentsForTeacher()">
+                    <option value="">-- اختر الصف --</option>
+                </select>
+            </div>
+            <div id="teacherTableDiv"></div>
+            <div id="teacherMessage"></div>
+        </div>
+    </div>
+
+    <!-- واجهة الإدارة (كل الصلاحيات) -->
+    <div id="adminScreen" class="hidden">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div class="school-header" style="margin-bottom: 0;">
+                    <h1>📖 تسجيل غياب الطلبة</h1>
+                    <p>مدرسة الخوير للتعليم الأساسي (5 - 9)</p>
+                </div>
+                <div>
+                    <span class="role-badge">👨‍💼 إدارة</span>
+                    <button class="btn btn-danger" onclick="logout()">🚪 خروج</button>
+                </div>
+            </div>
+            <div class="date-box" id="dateBoxAdmin"></div>
+            <div class="nav-buttons">
+                <button class="btn" onclick="showAdminSection('attendance')">📝 تسجيل الغياب</button>
+                <button class="btn" onclick="showAdminSection('students')">👨‍🎓 إدارة الطلاب</button>
+                <button class="btn" onclick="showAdminSection('reports')">📊 التقارير</button>
+                <button class="btn btn-warning" onclick="showAdminSection('truancy')">🏃 تقارير التسرب</button>
+            </div>
+        </div>
+
+        <!-- قسم تسجيل الغياب للإدارة -->
+        <div id="adminAttendanceSection" class="card">
+            <h2>📌 تسجيل غياب الطلبة اليومي</h2>
+            <div class="info-text">💡 جميع الطلاب حاضرون تلقائياً. اضغط "❌ غائب" للطلاب المتغيبين، أو اختر الحصة من القائمة المنسدلة لتسجيل تسرب الطالب.</div>
+            <div class="form-group">
+                <label>اختر المرحلة والفصل</label>
+                <select id="classSelectAdmin" onchange="loadStudentsForAdmin()">
+                    <option value="">-- اختر الصف --</option>
+                </select>
+            </div>
+            <div id="adminTableDiv"></div>
+            <div id="adminMessage"></div>
+        </div>
+
+        <!-- قسم إدارة الطلاب -->
+        <div id="adminStudentsSection" class="card hidden">
+            <h2>👨‍🎓 إدارة الطلاب</h2>
+            <div class="info-text">📋 الصق الأسماء (كل اسم في سطر جديد) - البيانات تُحفظ تلقائياً</div>
+            <div class="form-group">
+                <label>اختر المرحلة والفصل</label>
+                <select id="manageClassSelect" onchange="loadStudentsForManage()">
+                    <option value="">-- اختر الصف --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>📋 الصق الأسماء هنا</label>
+                <textarea id="bulkNames" rows="5" placeholder="أحمد علي&#10;سارة محمود&#10;محمد خالد"></textarea>
+                <button class="btn" onclick="addBulkStudents()">➕ إضافة الأسماء دفعة واحدة</button>
+            </div>
+            <h3>📋 قائمة الطلاب</h3>
+            <div id="manageStudentsTableDiv"></div>
+        </div>
+
+        <!-- قسم التقارير العادية -->
+        <div id="adminReportsSection" class="card hidden">
+            <h2>📊 التقارير اليومية</h2>
+            <div class="form-group">
+                <label>اختر التاريخ</label>
+                <input type="date" id="reportDate">
+                <button class="btn" onclick="generateReport()">عرض التقرير</button>
+            </div>
+            <div class="form-group">
+                <label>تقرير لمرحلة واحدة</label>
+                <select id="reportClassSelect">
+                    <option value="">جميع المراحل</option>
+                </select>
+                <button class="btn" onclick="generateReportForClass()">عرض التقرير</button>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success" onclick="downloadAllReport()">📥 تنزيل التقرير</button>
+            </div>
+            <div id="reportResult"></div>
+        </div>
+
+        <!-- قسم تقارير التسرب -->
+        <div id="adminTruancySection" class="card hidden">
+            <h2>🏃 تقارير الطلاب المتسربين (حسب الحصة)</h2>
+            <div class="form-group">
+                <label>اختر التاريخ</label>
+                <input type="date" id="truancyDate">
+                <button class="btn" onclick="generateTruancyReport()">عرض التقرير</button>
+            </div>
+            <div class="form-group">
+                <label>تقرير لمرحلة واحدة</label>
+                <select id="truancyClassSelect">
+                    <option value="">جميع المراحل</option>
+                </select>
+                <button class="btn" onclick="generateTruancyReportForClass()">عرض التقرير</button>
+            </div>
+            <div id="truancyResult"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================== البيانات الأساسية ========================
+    let students = [];
+    let attendance = [];
+    let nextStudentId = 1;
+    
+    // الصفوف: المراحل 5-9 والشعب 1-7
+    let classes = [];
+    for(let grade = 5; grade <= 9; grade++) {
+        for(let section = 1; section <= 7; section++) {
+            classes.push({
+                id: `${grade}/${section}`,
+                name: `الصف ${grade} - شعبة ${section}`
+            });
+        }
+    }
+    
+    // الأرقام السرية (لا تظهر في الواجهة أبداً)
+    const TEACHER_PASSWORD = "1234";
+    const ADMIN_PASSWORD = "99000580";
+    
+    let currentRole = null;
+    
+    // ======================== تحميل وحفظ البيانات ========================
+    function loadData() {
+        let storedStudents = localStorage.getItem('alkhuwair_students');
+        let storedAttendance = localStorage.getItem('alkhuwair_attendance');
+        let storedNextId = localStorage.getItem('alkhuwair_nextId');
+        
+        if(storedStudents) students = JSON.parse(storedStudents);
+        else students = [];
+        
+        if(storedAttendance) attendance = JSON.parse(storedAttendance);
+        else attendance = [];
+        
+        if(storedNextId) nextStudentId = parseInt(storedNextId);
+        else nextStudentId = 1;
+    }
+    
+    function saveAllData() {
+        localStorage.setItem('alkhuwair_students', JSON.stringify(students));
+        localStorage.setItem('alkhuwair_attendance', JSON.stringify(attendance));
+        localStorage.setItem('alkhuwair_nextId', nextStudentId);
+    }
+    
+    // ======================== تسجيل الدخول ========================
+    function login() {
+        let password = document.getElementById('loginPassword').value;
+        
+        if(password === TEACHER_PASSWORD) {
+            currentRole = 'teacher';
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('teacherScreen').classList.remove('hidden');
+            document.getElementById('adminScreen').classList.add('hidden');
+            loadData();
+            updateDates();
+            populateClassSelectsForTeacher();
+            loadStudentsForTeacher();
+            document.getElementById('loginPassword').value = '';
+        }
+        else if(password === ADMIN_PASSWORD) {
+            currentRole = 'admin';
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('teacherScreen').classList.add('hidden');
+            document.getElementById('adminScreen').classList.remove('hidden');
+            loadData();
+            updateDates();
+            populateClassSelectsForAdmin();
+            showAdminSection('attendance');
+            document.getElementById('loginPassword').value = '';
+        }
+        else {
+            alert("⚠️ الرقم السري غير صحيح");
+            document.getElementById('loginPassword').value = '';
+        }
+    }
+    
+    function logout() {
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('teacherScreen').classList.add('hidden');
+        document.getElementById('adminScreen').classList.add('hidden');
+        currentRole = null;
+        document.getElementById('loginPassword').value = '';
+    }
+    
+    function updateDates() {
+        let now = new Date();
+        let formatted = now.toLocaleDateString('ar-EG', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
+        let dateBoxTeacher = document.getElementById('dateBoxTeacher');
+        let dateBoxAdmin = document.getElementById('dateBoxAdmin');
+        if(dateBoxTeacher) dateBoxTeacher.innerHTML = `📅 ${formatted}`;
+        if(dateBoxAdmin) dateBoxAdmin.innerHTML = `📅 ${formatted}`;
+    }
+    
+    // ======================== دوال المعلم ========================
+    function populateClassSelectsForTeacher() {
+        let select = document.getElementById('classSelectTeacher');
+        let options = '<option value="">-- اختر الصف --</option>';
+        classes.forEach(c => { options += `<option value="${c.id}">${c.name}</option>`; });
+        select.innerHTML = options;
+    }
+    
+    function loadStudentsForTeacher() {
+        let classId = document.getElementById('classSelectTeacher').value;
+        if(!classId) {
+            document.getElementById('teacherTableDiv').innerHTML = '<div class="info-text">الرجاء اختيار الصف أولاً</div>';
+            return;
+        }
+        
+        let today = new Date().toISOString().split('T')[0];
+        let classStudents = students.filter(s => s.classId === classId && s.active !== false);
+        
+        if(classStudents.length === 0) {
+            document.getElementById('teacherTableDiv').innerHTML = '<div class="info-text">⚠️ لا يوجد طلاب في هذا الصف.</div>';
+            return;
+        }
+        
+        let html = '<table><thead><tr><th>#</th><th>الاسم</th><th>الفصل</th><th>الحالة</th><th>تسجيل الغياب</th><th>تسرب (اختر الحصة)</th></tr></thead><tbody>';
+        
+        classStudents.forEach((student, idx) => {
+            let existingAttendance = attendance.find(a => a.studentId === student.id && a.date === today);
+            let isAbsent = existingAttendance ? existingAttendance.status === 'absent' : false;
+            let truantPeriod = existingAttendance && existingAttendance.period ? existingAttendance.period : '';
+            
+            let periodOptions = '<option value="">-- لا شيء --</option>';
+            for(let p = 1; p <= 8; p++) {
+                let selected = (truantPeriod == p) ? 'selected' : '';
+                periodOptions += `<option value="${p}" ${selected}>الحصة ${p}</option>`;
+            }
+            
+            html += `<tr>
+                        <td>${idx+1}</td>
+                        <td style="text-align:right">${student.name}</td>
+                        <td>${student.classId}</td>
+                        <td>${!isAbsent ? '<span class="present-badge">✅ حاضر</span>' : '<span style="background:#e53e3e;color:white;padding:5px 10px;border-radius:5px;">❌ غائب</span>'}</td>
+                        <td><button class="absent-btn" onclick="teacherToggleAbsent(${student.id}, '${classId}')">${isAbsent ? '✅ إلغاء' : '❌ غائب'}</button></td>
+                        <td>
+                            <select class="period-select" id="period_${student.id}" onchange="teacherSetTruant(${student.id}, '${classId}')">
+                                ${periodOptions}
+                            </select>
+                         </td>
+                       </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById('teacherTableDiv').innerHTML = html;
+    }
+    
+    function teacherToggleAbsent(studentId, classId) {
+        let today = new Date().toISOString().split('T')[0];
+        let existingIndex = attendance.findIndex(a => a.studentId === studentId && a.date === today);
+        
+        if(existingIndex !== -1) {
+            attendance.splice(existingIndex, 1);
+        } else {
+            attendance.push({ studentId: studentId, date: today, status: 'absent', classId: classId });
+        }
+        
+        saveAllData();
+        loadStudentsForTeacher();
+        showTeacherMessage('✅ تم تحديث حالة الغياب');
+    }
+    
+    function teacherSetTruant(studentId, classId) {
+        let period = document.getElementById(`period_${studentId}`).value;
+        let today = new Date().toISOString().split('T')[0];
+        
+        if(period) {
+            let existingIndex = attendance.findIndex(a => a.studentId === studentId && a.date === today);
+            if(existingIndex !== -1) {
+                attendance[existingIndex].period = parseInt(period);
+                attendance[existingIndex].status = 'absent';
+            } else {
+                attendance.push({ studentId: studentId, date: today, status: 'absent', classId: classId, period: parseInt(period) });
+            }
+            showTeacherMessage(`✅ تم تسجيل تسرب الطالب في الحصة ${period}`);
+        } else {
+            let existingIndex = attendance.findIndex(a => a.studentId === studentId && a.date === today);
+            if(existingIndex !== -1 && attendance[existingIndex].period) {
+                delete attendance[existingIndex].period;
+                showTeacherMessage(`✅ تم إلغاء تسجيل حصة التسرب`);
+            }
+        }
+        saveAllData();
+        loadStudentsForTeacher();
+    }
+    
+    function showTeacherMessage(msg) {
+        let el = document.getElementById('teacherMessage');
+        el.innerHTML = `<div class="message">${msg}</div>`;
+        setTimeout(() => el.innerHTML = '', 2000);
+    }
+    
+    // ======================== دوال الإدارة ========================
+    function populateClassSelectsForAdmin() {
+        let select1 = document.getElementById('classSelectAdmin');
+        let select2 = document.getElementById('manageClassSelect');
+        let select3 = document.getElementById('reportClassSelect');
+        let select4 = document.getElementById('truancyClassSelect');
+        
+        let options = '<option value="">-- اختر الصف --</option>';
+        classes.forEach(c => { options += `<option value="${c.id}">${c.name}</option>`; });
+        
+        if(select1) select1.innerHTML = options;
+        if(select2) select2.innerHTML = options;
+        if(select3) select3.innerHTML = '<option value="">جميع المراحل</option>' + options;
+        if(select4) select4.innerHTML = '<option value="">جميع المراحل</option>' + options;
+    }
+    
+    function showAdminSection(section) {
+        document.getElementById('adminAttendanceSection').classList.add('hidden');
+        document.getElementById('adminStudentsSection').classList.add('hidden');
+        document.getElementById('adminReportsSection').classList.add('hidden');
+        document.getElementById('adminTruancySection').classList.add('hidden');
+        
+        if(section === 'attendance') {
+            document.getElementById('adminAttendanceSection').classList.remove('hidden');
+            if(document.getElementById('classSelectAdmin').value) loadStudentsForAdmin();
+        }
+        if(section === 'students') {
+            document.getElementById('adminStudentsSection').classList.remove('hidden');
+            if(document.getElementById('manageClassSelect').value) loadStudentsForManage();
+        }
+        if(section === 'reports') {
+            document.getElementById('adminReportsSection').classList.remove('hidden');
+        }
+        if(section === 'truancy') {
+            document.getElementById('adminTruancySection').classList.remove('hidden');
+        }
+    }
+    
+    function loadStudentsForAdmin() {
+        let classId = document.getElementById('classSelectAdmin').value;
+        if(!classId) {
+            document.getElementById('adminTableDiv').innerHTML = '<div class="info-text">الرجاء اختيار الصف أولاً</div>';
+            return;
+        }
+        
+        let today = new Date().toISOString().split('T')[0];
+        let classStudents = students.filter(s => s.classId === classId && s.active !== false);
+        
+        if(classStudents.length === 0) {
+            document.getElementById('adminTableDiv').innerHTML = '<div class="info-text">⚠️ لا يوجد طلاب في هذا الصف.</div>';
+            return;
+        }
+        
+        let html = '<tr><thead><tr><th>#</th><th>الاسم</th><th>الفصل</th><th>الحالة</th><th>تسجيل الغياب</th><th>تسرب (اختر الحصة)</th><th>حذف</th></tr></thead><tbody>';
+        
+        classStudents.forEach((student, idx) => {
+            let existingAttendance = attendance.find(a => a.studentId === student.id && a.date === today);
+            let isAbsent = existingAttendance ? existingAttendance.status === 'absent' : false;
+            let truantPeriod = existingAttendance && existingAttendance.period ? existingAttendance.period : '';
+            
+            let periodOptions = '<option value="">-- لا شيء --</option>';
+            for(let p = 1; p <= 8; p++) {
+                let selected = (truantPeriod == p) ? 'selected' : '';
+                periodOptions += `<option value="${p}" ${selected}>الحصة ${p}</option>`;
+            }
+            
+            html += `<tr>
+                         <td>${idx+1}</td>
+                        <td style="text-align:right">${student.name}</td>
+                         <td>${student.classId}</td>
+                         <td>${!isAbsent ? '<span class="present-badge">✅ حاضر</span>' : '<span style="background:#e53e3e;color:white;padding:5px 10px;border-radius:5px;">❌ غائب</span>'}</td>
+                         <td><button class="absent-btn" onclick="adminToggleAbsent(${student.id}, '${classId}')">${isAbsent ? '✅ إلغاء' : '❌ غائب'}</button></td>
+                         <td>
+                            <select class="period-select" id="admin_period_${student.id}" onchange="adminSetTruant(${student.id}, '${classId}')">
+                                ${periodOptions}
+                            </select>
+                         </td>
+                         <td><button class="delete-btn" onclick="adminDeleteStudent(${student.id})">🗑️ حذف</button></td>
+                       </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById('adminTableDiv').innerHTML = html;
+    }
+    
+    function adminToggleAbsent(studentId, classId) {
+        let today = new Date().toISOString().split('T')[0];
+        let existingIndex = attendance.findIndex(a => a.studentId === studentId && a.date === today);
+        
+        if(existingIndex !== -1) {
+            attendance.splice(existingIndex, 1);
+        } else {
+            attendance.push({ studentId: studentId, date: today, status: 'absent', classId: classId });
+        }
+        
+        saveAllData();
+        loadStudentsForAdmin();
+        showAdminMessage('✅ تم تحديث حالة الغياب');
+    }
+    
+    function adminSetTruant(studentId, classId) {
+        let period = document.getElementById(`admin_period_${studentId}`).value;
+        let today = new Date().toISOString().split('T')[0];
+        
+        if(period) {
+            let existingIndex = attendance.findIndex(a => a.studentId === studentId && a.date === today);
+            if(existingIndex !== -1) {
+                attendance[existingIndex].period = parseInt(period);
+                attendance[existingIndex].status = 'absent';
+            } else {
+                attendance.push({ studentId: studentId, date: today, status: 'absent', classId: classId, period: parseInt(period) });
+            }
+            showAdminMessage(`✅ تم تسجيل تسرب الطالب في الحصة ${period}`);
+        } else {
+            let existingIndex = attendance.findIndex(a => a.studentId === studentId && a.date === today);
+            if(existingIndex !== -1 && attendance[existingIndex].period) {
+                delete attendance[existingIndex].period;
+                showAdminMessage(`✅ تم إلغاء تسجيل حصة التسرب`);
+            }
+        }
+        saveAllData();
+        loadStudentsForAdmin();
+    }
+    
+    function adminDeleteStudent(studentId) {
+        if(confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
+            let index = students.findIndex(s => s.id === studentId);
+            if(index !== -1) students.splice(index, 1);
+            saveAllData();
+            loadStudentsForAdmin();
+            loadStudentsForManage();
+            showAdminMessage('✅ تم حذف الطالب');
+        }
+    }
+    
+    function showAdminMessage(msg) {
+        let el = document.getElementById('adminMessage');
+        if(el) {
+            el.innerHTML = `<div class="message">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 2000);
+        }
+    }
+    
+    // ======================== إدارة الطلاب ========================
+    function loadStudentsForManage() {
+        let classId = document.getElementById('manageClassSelect').value;
+        if(!classId) {
+            document.getElementById('manageStudentsTableDiv').innerHTML = '<div class="info-text">الرجاء اختيار الصف أولاً</div>';
+            return;
+        }
+        
+        let classStudents = students.filter(s => s.classId === classId && s.active !== false);
+        
+        if(classStudents.length === 0) {
+            document.getElementById('manageStudentsTableDiv').innerHTML = '<div class="info-text">⚠️ لا يوجد طلاب في هذا الصف.</div>';
+            return;
+        }
+        
+        let html = '<table><thead><tr><th>#</th><th>الاسم</th><th>الفصل</th><th>حذف</th></tr></thead><tbody>';
+        classStudents.forEach((student, idx) => {
+            html += `<tr>
+                         <td>${idx+1}</td>
+                        <td style="text-align:right">${student.name}</td>
+                         <td>${student.classId}</td>
+                         <td><button class="delete-btn" onclick="adminDeleteStudentFromManage(${student.id})">🗑️ حذف</button></td>
+                       </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById('manageStudentsTableDiv').innerHTML = html;
+    }
+    
+    function adminDeleteStudentFromManage(studentId) {
+        if(confirm('حذف الطالب؟')) {
+            let index = students.findIndex(s => s.id === studentId);
+            if(index !== -1) students.splice(index, 1);
+            saveAllData();
+            loadStudentsForManage();
+            if(document.getElementById('classSelectAdmin').value) loadStudentsForAdmin();
+        }
+    }
+    
+    function addBulkStudents() {
+        let classId = document.getElementById('manageClassSelect').value;
+        if(!classId) {
+            alert('اختر الصف أولاً');
+            return;
+        }
+        
+        let namesText = document.getElementById('bulkNames').value;
+        if(!namesText.trim()) {
+            alert('الرجاء لصق الأسماء أولاً');
+            return;
+        }
+        
+        let names = namesText.split('\n').filter(n => n.trim().length > 0);
+        let added = 0;
+        let duplicate = 0;
+        
+        names.forEach(name => {
+            name = name.trim();
+            if(name) {
+                let exists = students.some(s => s.name === name && s.classId === classId);
+                if(!exists) {
+                    students.push({
+                        id: nextStudentId++,
+                        name: name,
+                        classId: classId,
+                        active: true
+                    });
+                    added++;
+                } else {
+                    duplicate++;
+                }
+            }
+        });
+        
+        saveAllData();
+        loadStudentsForManage();
+        document.getElementById('bulkNames').value = '';
+        
+        let msg = `✅ تم إضافة ${added} طالب جديد`;
+        if(duplicate > 0) msg += ` (تم تخطي ${duplicate} اسم مكرر)`;
+        alert(msg);
+    }
+    
+    // ======================== التقارير العادية ========================
+    function generateReport() {
+        let date = document.getElementById('reportDate').value;
+        if(!date) {
+            alert('اختر التاريخ');
+            return;
+        }
+        
+        let allStudents = students.filter(s => s.active !== false);
+        let attendanceOnDate = attendance.filter(a => a.date === date);
+        
+        if(allStudents.length === 0) {
+            document.getElementById('reportResult').innerHTML = '<div class="info-text">⚠️ لا يوجد طلاب مسجلين</div>';
+            return;
+        }
+        
+        let reportHtml = `<h3>📋 تقرير الغياب - ${date}</h3>`;
+        reportHtml += '<tr><thead><tr><th>#</th><th>اسم الطالب</th><th>الفصل</th><th>الحالة</th><th>حصة التسرب</th></tr></thead><tbody>';
+        
+        let counter = 1;
+        for(let student of allStudents) {
+            let attRecord = attendanceOnDate.find(a => a.studentId === student.id);
+            let status = (attRecord && attRecord.status === 'absent') ? '❌ غائب' : '✅ حاضر';
+            let period = (attRecord && attRecord.period) ? `الحصة ${attRecord.period}` : '-';
+            reportHtml += `<tr>
+                                <td>${counter++}</td>
+                               <td style="text-align:right">${student.name}</td>
+                                <td>${student.classId}</td>
+                                <td>${status}</td>
+                                <td>${period}</td>
+                              </tr>`;
+        }
+        
+        reportHtml += '</tbody></table>';
+        document.getElementById('reportResult').innerHTML = reportHtml;
+    }
+    
+    function generateReportForClass() {
+        let classId = document.getElementById('reportClassSelect').value;
+        let date = document.getElementById('reportDate').value;
+        
+        if(!date) {
+            alert('اختر التاريخ');
+            return;
+        }
+        if(!classId) {
+            alert('اختر مرحلة');
+            return;
+        }
+        
+        let classStudents = students.filter(s => s.classId === classId && s.active !== false);
+        let attendanceOnDate = attendance.filter(a => a.date === date && a.classId === classId);
+        
+        if(classStudents.length === 0) {
+            document.getElementById('reportResult').innerHTML = '<div class="info-text">⚠️ لا يوجد طلاب في هذا الصف</div>';
+            return;
+        }
+        
+        let reportHtml = `<h3>📋 تقرير ${classId} - ${date}</h3>`;
+        reportHtml += '<table><thead><tr><th>#</th><th>اسم الطالب</th><th>الفصل</th><th>الحالة</th><th>حصة التسرب</th></tr></thead><tbody>';
+        
+        classStudents.forEach((student, idx) => {
+            let attRecord = attendanceOnDate.find(a => a.studentId === student.id);
+            let status = (attRecord && attRecord.status === 'absent') ? '❌ غائب' : '✅ حاضر';
+            let period = (attRecord && attRecord.period) ? `الحصة ${attRecord.period}` : '-';
+            reportHtml += `<tr>
+                                <td>${idx+1}</td>
+                               <td style="text-align:right">${student.name}</td>
+                                <td>${student.classId}</td>
+                                <td>${status}</td>
+                                <td>${period}</td>
+                              </tr>`;
+        });
+        
+        reportHtml += '</tbody></tr>';
+        document.getElementById('reportResult').innerHTML = reportHtml;
+    }
+    
+    function downloadAllReport() {
+        let date = document.getElementById('reportDate').value;
+        if(!date) {
+            alert('اختر التاريخ أولاً');
+            return;
+        }
+        
+        let allStudents = students.filter(s => s.active !== false);
+        let attendanceOnDate = attendance.filter(a => a.date === date);
+        
+        if(allStudents.length === 0) {
+            alert('لا يوجد طلاب مسجلين');
+            return;
+        }
+        
+        let csvRows = [];
+        csvRows.push(['الرقم', 'الاسم', 'الفصل', 'الحالة', 'حصة التسرب', 'التاريخ']);
+        
+        let counter = 1;
+        for(let student of allStudents) {
+            let attRecord = attendanceOnDate.find(a => a.studentId === student.id);
+            let status = (attRecord && attRecord.status === 'absent') ? 'غائب' : 'حاضر';
+            let period = (attRecord && attRecord.period) ? `الحصة ${attRecord.period}` : '-';
+            csvRows.push([counter++, student.name, student.classId, status, period, date]);
+        }
+        
+        let csvContent = csvRows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+        let blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute("download", `تقرير_غياب_مدرسة_الخوير_${date}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+    
+    // ======================== تقارير التسرب ========================
+    function generateTruancyReport() {
+        let date = document.getElementById('truancyDate').value;
+        if(!date) {
+            alert('اختر التاريخ');
+            return;
+        }
+        
+        let truantRecords = attendance.filter(a => a.date === date && a.period);
+        
+        if(truantRecords.length === 0) {
+            document.getElementById('truancyResult').innerHTML = '<div class="info-text">⚠️ لا توجد سجلات تسرب في هذا التاريخ</div>';
+            return;
+        }
+        
+        let reportHtml = `<h3>🏃 تقرير الطلاب المتسربين - ${date}</h3>`;
+        reportHtml += '<table><thead><tr><th>#</th><th>اسم الطالب</th><th>الفصل</th><th>حصة التسرب</th></tr></thead><tbody>';
+        
+        truantRecords.forEach((record, idx) => {
+            let student = students.find(s => s.id === record.studentId);
+            if(student) {
+                reportHtml += `<tr>
+                                    <td>${idx+1}</td>
+                                    <td style="text-align:right">${student.name}</td>
+                                    <td>${student.classId}</td>
+                                    <td>الحصة ${record.period}</td>
+                                  </tr>`;
+            }
+        });
+        
+        reportHtml += '</tbody></table>';
+        document.getElementById('truancyResult').innerHTML = reportHtml;
+    }
+    
+    function generateTruancyReportForClass() {
+        let classId = document.getElementById('truancyClassSelect').value;
+        let date = document.getElementById('truancyDate').value;
+        
+        if(!date) {
+            alert('اختر التاريخ');
+            return;
+        }
+        if(!classId) {
+            alert('اختر مرحلة');
+            return;
+        }
+        
+        let truantRecords = attendance.filter(a => a.date === date && a.period && a.classId === classId);
+        
+        if(truantRecords.length === 0) {
+            document.getElementById('truancyResult').innerHTML = `<div class="info-text">⚠️ لا توجد سجلات تسرب في ${classId} بتاريخ ${date}</div>`;
+            return;
+        }
+        
+        let reportHtml = `<h3>🏃 تقرير الطلاب المتسربين - ${classId} - ${date}</h3>`;
+        reportHtml += '<table><thead><tr><th>#</th><th>اسم الطالب</th><th>الفصل</th><th>حصة التسرب</th></tr></thead><tbody>';
+        
+        truantRecords.forEach((record, idx) => {
+            let student = students.find(s => s.id === record.studentId);
+            if(student) {
+                reportHtml += `<tr>
+                                    <td>${idx+1}</td>
+                                    <td style="text-align:right">${student.name}</td>
+                                    <td>${student.classId}</td>
+                                    <td>الحصة ${record.period}</td>
+                                  </tr>`;
+            }
+        });
+        
+        reportHtml += '</tbody></table>';
+        document.getElementById('truancyResult').innerHTML = reportHtml;
+    }
+    
+    // ======================== تهيئة أولية ========================
+    loadData();
+    updateDates();
+    populateClassSelectsForTeacher();
+    populateClassSelectsForAdmin();
+</script>
+</body>
+</html>
